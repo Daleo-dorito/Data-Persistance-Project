@@ -18,13 +18,18 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
-    
+    public DisplayHighScore displayHighScore;
+
     // Start is called before the first frame update
     void Start()
     {
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
-        
+
+        PersistentDataHandler.Instance.LoadPlayerScore();
+        if(PersistentDataHandler.Instance.playerName == "") { PersistentDataHandler.Instance.playerName = "PLAYER"; }
+        displayHighScore.UpdateHighScoreText();
+
         int[] pointCountArray = new [] {1,1,2,2,5,5};
         for (int i = 0; i < LineCount; ++i)
         {
@@ -57,6 +62,15 @@ public class MainManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                if (m_Points >= PersistentDataHandler.Instance.highScore) 
+                { 
+                    
+                    PersistentDataHandler.Instance.highScorePlayerName = PersistentDataHandler.Instance.playerName;
+                    PersistentDataHandler.Instance.highScore = m_Points;
+                    PersistentDataHandler.Instance.SavePlayerScore();
+
+                }
+               
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
         }
