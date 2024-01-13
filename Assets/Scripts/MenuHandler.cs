@@ -19,6 +19,7 @@ public class MenuHandler : MonoBehaviour
 
     public void SetPlayerName ()
     {
+        if (string.IsNullOrWhiteSpace(playerNameInput.text)) { playerNameInput.text = "PLAYER"; }
 
         PersistentDataHandler.Instance.playerName = playerNameInput.text;
 

@@ -26,6 +26,8 @@ public class MainManager : MonoBehaviour
     public AudioClip endSound;
     public Boolean endSoundPlayed;
 
+    public GameObject pausePanel;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -66,6 +68,8 @@ public class MainManager : MonoBehaviour
         else if (m_GameOver)
         {
 
+            PersistentDataHandler.Instance.firstTime = false;
+
             if (!endSoundPlayed)
             {
 
@@ -79,13 +83,13 @@ public class MainManager : MonoBehaviour
                 if (PersistentDataHandler.Instance != null)
                 {
 
+
                     if (m_Points >= PersistentDataHandler.Instance.highScore)
                     {
 
                         PersistentDataHandler.Instance.highScorePlayerName = PersistentDataHandler.Instance.playerName;
                         PersistentDataHandler.Instance.highScore = m_Points;
                         PersistentDataHandler.Instance.SavePlayerScore();
-                        PersistentDataHandler.Instance.firstTime = false;
 
                     }
 
@@ -135,4 +139,25 @@ public class MainManager : MonoBehaviour
         }
 
     }
+
+    private void OnApplicationFocus(bool focus)
+    {
+
+        if (!focus)
+        {
+
+            pausePanel.SetActive(true);
+            Time.timeScale = 0f;
+
+        }
+        else
+        {
+
+            pausePanel.SetActive(false);
+            Time.timeScale = 1f;
+
+        }
+
+    }
+
 }

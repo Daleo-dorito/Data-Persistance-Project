@@ -45,7 +45,6 @@ public class PersistentDataHandler : MonoBehaviour
         SaveData data = new SaveData();
         data.highScorePlayerName = highScorePlayerName;
         data.highScore = highScore;
-        data.firstTime = firstTime;
 
         string json = JsonUtility.ToJson(data);
 
@@ -62,8 +61,43 @@ public class PersistentDataHandler : MonoBehaviour
 
             highScorePlayerName = data.highScorePlayerName;
             highScore = data.highScore;
-            firstTime = data.firstTime;
 
         }
+    }
+
+    [ContextMenu("Reset All Data")]
+    public void DeleteAllData()
+    {
+
+        string path = Application.persistentDataPath + "/savefile.json";
+
+        if (File.Exists(path))
+        {
+
+            Debug.Log("Data reseted");
+
+            string json = File.ReadAllText(path);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+
+            highScorePlayerName = "PLAYER";
+
+            highScore = 0;
+
+            firstTime = false;
+
+            SavePlayerScore();
+
+            LoadPlayerScore();
+
+            if (FindObjectOfType<MainManager>() != null)
+            {
+
+                FindObjectOfType<MainManager>().displayHighScore.UpdateHighScoreText();
+
+            }
+
+        }
+
     }
 }

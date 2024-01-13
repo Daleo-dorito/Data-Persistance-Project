@@ -25,7 +25,7 @@ public class Ball : MonoBehaviour
         if (transform.parent == null)
         {
 
-            if (Math.Abs(m_Rigidbody.velocity.x) < 0.01f)
+            if (Math.Abs(m_Rigidbody.velocity.x) < 0.1f)
             {
                 Debug.Log("Extra impulse used");
                 m_Rigidbody.AddForce(Mathf.Sign(UnityEngine.Random.Range(1,-1)), 0, 0);
@@ -58,7 +58,7 @@ public class Ball : MonoBehaviour
             velocity = velocity.normalized * maxSpeed;
         }
 
-        Debug.Log(velocity.magnitude);
+        //Debug.Log(velocity.magnitude);
         m_Rigidbody.velocity = velocity;
     }
 }

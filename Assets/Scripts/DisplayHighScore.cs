@@ -15,6 +15,7 @@ public class DisplayHighScore : MonoBehaviour
         if (PersistentDataHandler.Instance != null)
         {
 
+            Debug.Log("Score Updated");
             highScoreText.text = "High Score: " + PersistentDataHandler.Instance.highScore + " by " + PersistentDataHandler.Instance.highScorePlayerName;
 
         }     
