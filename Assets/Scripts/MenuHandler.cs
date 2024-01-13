@@ -12,6 +12,7 @@ public class MenuHandler : MonoBehaviour
     public void StartGame()
     {
         
+        PersistentDataHandler.Instance.firstTime = true;
         SceneManager.LoadScene(1);
 
     }

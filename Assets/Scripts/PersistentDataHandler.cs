@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System;
 
 public class PersistentDataHandler : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class PersistentDataHandler : MonoBehaviour
     public string playerName;
     public string highScorePlayerName;
     public int highScore;
+    public Boolean firstTime;
 
     private void Awake()
     {
@@ -34,6 +36,8 @@ public class PersistentDataHandler : MonoBehaviour
         public string highScorePlayerName;
 
         public int highScore;
+
+        public Boolean firstTime;
     }
 
     public void SavePlayerScore()
@@ -41,6 +45,7 @@ public class PersistentDataHandler : MonoBehaviour
         SaveData data = new SaveData();
         data.highScorePlayerName = highScorePlayerName;
         data.highScore = highScore;
+        data.firstTime = firstTime;
 
         string json = JsonUtility.ToJson(data);
 
@@ -57,6 +62,7 @@ public class PersistentDataHandler : MonoBehaviour
 
             highScorePlayerName = data.highScorePlayerName;
             highScore = data.highScore;
+            firstTime = data.firstTime;
 
         }
     }

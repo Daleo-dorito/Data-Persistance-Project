@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TreeEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -20,27 +22,28 @@ public class MainManager : MonoBehaviour
 
     public DisplayHighScore displayHighScore;
 
+    private AudioSource audioSource;
+    public AudioClip startSound;
+    public AudioClip endSound;
+    public Boolean endSoundPlayed;
+
     // Start is called before the first frame update
     void Start()
     {
-        const float step = 0.6f;
-        int perLine = Mathf.FloorToInt(4.0f / step);
 
-        PersistentDataHandler.Instance.LoadPlayerScore();
-        if(PersistentDataHandler.Instance.playerName == "") { PersistentDataHandler.Instance.playerName = "PLAYER"; }
-        displayHighScore.UpdateHighScoreText();
+        GenerateBricks();
+        audioSource = GetComponent<AudioSource>();
 
-        int[] pointCountArray = new [] {1,1,2,2,5,5};
-        for (int i = 0; i < LineCount; ++i)
-        {
-            for (int x = 0; x < perLine; ++x)
-            {
-                Vector3 position = new Vector3(-1.5f + step * x, 2.5f + i * 0.3f, 0);
-                var brick = Instantiate(BrickPrefab, position, Quaternion.identity);
-                brick.PointValue = pointCountArray[i];
-                brick.onDestroyed.AddListener(AddPoint);
-            }
+        if (PersistentDataHandler.Instance != null) 
+        { 
+
+            PersistentDataHandler.Instance.LoadPlayerScore();
+            if (string.IsNullOrWhiteSpace(PersistentDataHandler.Instance.playerName)) { PersistentDataHandler.Instance.playerName = "PLAYER"; }
+            if (PersistentDataHandler.Instance.firstTime) { audioSource.PlayOneShot(startSound); }
+
         }
+        displayHighScore.UpdateHighScoreText();   
+        
     }
 
     private void Update()
@@ -50,29 +53,55 @@ public class MainManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 m_Started = true;
-                float randomDirection = Random.Range(-1.0f, 1.0f);
+                float randomDirection = UnityEngine.Random.Range(-1.0f, 1.0f);
                 Vector3 forceDir = new Vector3(randomDirection, 1, 0);
                 forceDir.Normalize();
 
                 Ball.transform.SetParent(null);
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
             }
+
+            endSoundPlayed = false;
+
         }
         else if (m_GameOver)
         {
+
+            if (!endSoundPlayed)
+            {
+
+                audioSource.PlayOneShot(endSound, 2);
+                endSoundPlayed = true;
+
+            }
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                if (m_Points >= PersistentDataHandler.Instance.highScore) 
-                { 
-                    
-                    PersistentDataHandler.Instance.highScorePlayerName = PersistentDataHandler.Instance.playerName;
-                    PersistentDataHandler.Instance.highScore = m_Points;
-                    PersistentDataHandler.Instance.SavePlayerScore();
+                if (PersistentDataHandler.Instance != null)
+                {
 
-                }
-               
+                    if (m_Points >= PersistentDataHandler.Instance.highScore)
+                    {
+
+                        PersistentDataHandler.Instance.highScorePlayerName = PersistentDataHandler.Instance.playerName;
+                        PersistentDataHandler.Instance.highScore = m_Points;
+                        PersistentDataHandler.Instance.SavePlayerScore();
+                        PersistentDataHandler.Instance.firstTime = false;
+
+                    }
+
+                }          
+                              
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
+        }
+
+        if (FindObjectsOfType<Brick>().Length == 0)
+        {
+
+            GenerateBricks();
+            FindObjectOfType<Ball>().maxSpeed += FindObjectOfType<Ball>().maxSpeed * 0.2f;
+
         }
     }
 
@@ -86,5 +115,25 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+    }
+
+    public void GenerateBricks()
+    {
+        const float step = 0.6f;
+        int perLine = Mathf.FloorToInt(4.0f / step);
+
+        int[] pointCountArray = new[] { 1, 1, 2, 2, 5, 5 };
+
+        for (int i = 0; i < LineCount; ++i)
+        {
+            for (int x = 0; x < perLine; ++x)
+            {
+                Vector3 position = new Vector3(-1.5f + step * x, 2.5f + i * 0.3f, 0);
+                var brick = Instantiate(BrickPrefab, position, Quaternion.identity);
+                brick.PointValue = pointCountArray[i];
+                brick.onDestroyed.AddListener(AddPoint);
+            }
+        }
+
     }
 }

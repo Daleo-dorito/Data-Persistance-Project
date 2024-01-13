@@ -12,7 +12,12 @@ public class DisplayHighScore : MonoBehaviour
     public void UpdateHighScoreText()
     {
 
-        highScoreText.text = "High Score: " + PersistentDataHandler.Instance.highScore + " by " + PersistentDataHandler.Instance.highScorePlayerName;
+        if (PersistentDataHandler.Instance != null)
+        {
+
+            highScoreText.text = "High Score: " + PersistentDataHandler.Instance.highScore + " by " + PersistentDataHandler.Instance.highScorePlayerName;
+
+        }     
 
     }
 }
