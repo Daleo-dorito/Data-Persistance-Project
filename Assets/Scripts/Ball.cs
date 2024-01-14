@@ -8,6 +8,7 @@ public class Ball : MonoBehaviour
     private Rigidbody m_Rigidbody;
 
     public float maxSpeed = 3;
+    public float minSpeed;
 
     private AudioSource audioSource;
     public AudioClip bounceSound;
@@ -21,7 +22,9 @@ public class Ball : MonoBehaviour
 
     private void Update()
     {
-        
+
+        minSpeed = maxSpeed * 0.4f;
+
         if (transform.parent == null)
         {
 
@@ -56,6 +59,12 @@ public class Ball : MonoBehaviour
         if (velocity.magnitude > maxSpeed)
         {
             velocity = velocity.normalized * maxSpeed;
+        }
+
+        //min velocity
+        if (velocity.magnitude < minSpeed)
+        {
+            velocity = velocity.normalized * minSpeed;
         }
 
         //Debug.Log(velocity.magnitude);
